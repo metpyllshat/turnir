@@ -433,8 +433,13 @@ function DisciplineTable({
                   {entry.place === 1 ? "👑" : getMedalEmoji(entry.place)}{" "}
                   {entry.place}
                 </td>
-                <td className="py-3 px-4 font-semibold text-bone">
-                  {entry.playerName}
+                <td className="py-3 px-4">
+                  <a
+                    href={`/player/${entry.playerId}`}
+                    className="font-semibold text-bone hover:text-toxic transition-colors hover:underline"
+                  >
+                    {entry.playerName}
+                  </a>
                 </td>
                 <td className="py-3 px-4 text-center font-bold text-toxic">
                   +{entry.score}

@@ -5,8 +5,6 @@ import { NextRequest } from "next/server";
 
 export const dynamic = "force-dynamic";
 
-// POST – bot submits a result
-// Body: { secret, discord_id, player_name, avatar_url?, discipline_slug, place, participants_count }
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -17,20 +15,18 @@ export async function POST(req: NextRequest) {
       avatar_url,
       discipline_slug,
       place,
-      participants_count,
     } = body;
 
-    // Simple shared-secret auth
     const expectedSecret = process.env.BOT_SECRET || "koryazhma-secret-2026";
     if (secret !== expectedSecret) {
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!discord_id || !player_name || !discipline_slug || !place || !participants_count) {
+    if (!discord_id || !player_name || !discipline_slug || !place) {
       return Response.json({ error: "Missing required fields" }, { status: 400 });
     }
 
-    // Upsert player
+    // 1. Upsert игрока
     const existingPlayer = await db
       .select()
       .from(players)
@@ -40,7 +36,6 @@ export async function POST(req: NextRequest) {
     let playerId: number;
     if (existingPlayer.length > 0) {
       playerId = existingPlayer[0].id;
-      // Update name/avatar if changed
       await db
         .update(players)
         .set({ name: player_name, avatarUrl: avatar_url || null })
@@ -48,16 +43,12 @@ export async function POST(req: NextRequest) {
     } else {
       const [newPlayer] = await db
         .insert(players)
-        .values({
-          discordId: discord_id,
-          name: player_name,
-          avatarUrl: avatar_url || null,
-        })
+        .values({ discordId: discord_id, name: player_name, avatarUrl: avatar_url || null })
         .returning();
       playerId = newPlayer.id;
     }
 
-    // Make sure discipline exists
+    // 2. Найти дисциплину
     const existingDiscipline = await db
       .select()
       .from(disciplines)
@@ -65,46 +56,62 @@ export async function POST(req: NextRequest) {
       .limit(1);
 
     if (existingDiscipline.length === 0) {
-      return Response.json(
-        { error: `Discipline '${discipline_slug}' not found` },
-        { status: 404 }
-      );
+      return Response.json({ error: `Discipline '${discipline_slug}' not found` }, { status: 404 });
     }
     const disciplineId = existingDiscipline[0].id;
 
-    // Calculate score: more participants = more points. Score = participants - place + 1
-    const score = Math.max(participants_count - place + 1, 0);
-
-    // Upsert result
-    const existingResult = await db
+    // 3. Получить все текущие результаты по этой дисциплине
+    const currentResults = await db
       .select()
       .from(results)
-      .where(
-        and(
-          eq(results.playerId, playerId),
-          eq(results.disciplineId, disciplineId)
-        )
-      )
-      .limit(1);
+      .where(eq(results.disciplineId, disciplineId));
 
-    if (existingResult.length > 0) {
+    // Новый игрок или обновление?
+    const isNewParticipant = !currentResults.find(r => r.playerId === playerId);
+    const totalParticipants = currentResults.length + (isNewParticipant ? 1 : 0);
+
+    // 4. Пересчитать очки всем существующим участникам
+    // (потому что общий пул вырос)
+    for (const result of currentResults) {
+      if (result.playerId !== playerId) {
+        const recalcScore = Math.round(
+          Math.sqrt(10 * totalParticipants) * (totalParticipants - result.place + 1) / totalParticipants
+        );
+        await db
+          .update(results)
+          .set({ score: recalcScore })
+          .where(eq(results.id, result.id));
+      }
+    }
+
+    // 5. Очки для нового/обновляемого результата
+    const score = Math.round(
+      Math.sqrt(10 * totalParticipants) * (totalParticipants - place + 1) / totalParticipants
+    );
+
+    // 6. Upsert результат
+    const existingResult = currentResults.find(r => r.playerId === playerId);
+    if (existingResult) {
       await db
         .update(results)
         .set({ place, score })
-        .where(eq(results.id, existingResult[0].id));
+        .where(eq(results.id, existingResult.id));
     } else {
-      await db.insert(results).values({
-        playerId,
-        disciplineId,
-        place,
-        score,
-      });
+      await db.insert(results).values({ playerId, disciplineId, place, score });
     }
 
-    // Log update
+    // 7. Лог обновления (для real-time)
     await db.insert(updateLog).values({});
 
-    return Response.json({ ok: true, playerId, disciplineId, score });
+    return Response.json({
+      ok: true,
+      playerId,
+      disciplineId,
+      score,
+      totalParticipants,
+      message: `${player_name} — ${place} место, +${score} очков (всего участников: ${totalParticipants})`,
+    });
+
   } catch (err: unknown) {
     console.error("POST /api/results error:", err);
     const message = err instanceof Error ? err.message : "Unknown error";

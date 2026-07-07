@@ -88,8 +88,7 @@ export default function AdminPage() {
         discord_id: discordId,
         player_name: playerName,
         discipline_slug: disciplineSlug,
-        place: parseInt(place),
-        participants_count: parseInt(participantsCount),
+        place: parseInt(place)
       }),
     });
 
@@ -201,20 +200,6 @@ export default function AdminPage() {
                   placeholder="1"
                   value={place}
                   onChange={(e) => setPlace(e.target.value)}
-                  className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="text-bone/60 text-xs mb-1 block">
-                  ВСЕГО УЧАСТНИКОВ
-                </label>
-                <input
-                  type="number"
-                  min="1"
-                  placeholder="5"
-                  value={participantsCount}
-                  onChange={(e) => setParticipantsCount(e.target.value)}
                   className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none"
                   required
                 />

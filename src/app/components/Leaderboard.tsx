@@ -371,9 +371,25 @@ function DisciplineTable({
       <div className="text-center py-12">
         <div className="text-4xl mb-4">{discipline.emoji}</div>
         <p className="text-bone/50 text-lg">{discipline.name}</p>
-        <p className="text-bone/30 text-sm mt-2">
-          АРЕНА ПУСТА. МУТАНТЫ НЕ ЯВИЛИСЬ.
-        </p>
+
+        {/* ДОБАВЬ ВОТ ЭТО */}
+        {!discipline.isActive && discipline.scheduledAt ? (
+          <div className="mt-4 inline-block bg-blood/10 border border-blood/30 rounded-lg px-6 py-3">
+            <p className="text-blood font-bold text-sm">⏳ ДАТА ПРОВЕДЕНИЯ</p>
+            <p className="text-bone/70 text-lg font-bold mt-1">
+              {new Date(discipline.scheduledAt).toLocaleString("ru-RU", {
+                day: "numeric",
+                month: "long",
+                hour: "2-digit",
+                minute: "2-digit",
+              })}
+            </p>
+          </div>
+        ) : (
+          <p className="text-bone/30 text-sm mt-2">
+            АРЕНА ПУСТА. МУТАНТЫ НЕ ЯВИЛИСЬ.
+          </p>
+        )}
       </div>
     );
   }

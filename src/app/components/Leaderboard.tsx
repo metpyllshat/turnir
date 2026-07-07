@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 
 interface OverallEntry {
   playerId: number;
@@ -251,9 +252,12 @@ function OverallTable({
                 style={{ animationDelay: `${idx * 0.15}s` }}
               >
                 <div className={`${sizes[idx]} mb-2`}>{medals[idx]}</div>
-                <div className="text-lg font-bold text-bone mb-1">
+                <Link
+                  href={`/player/${entry.playerId}`}
+                  className="text-lg font-bold text-bone mb-1 hover:text-toxic transition-colors block"
+                >
                   {entry.playerName}
-                </div>
+                </Link>
                 <div className="text-3xl font-extrabold text-toxic toxic-glow">
                   {entry.totalScore}
                 </div>
@@ -311,8 +315,13 @@ function OverallTable({
                   <td className={`py-3 px-4 font-bold ${getMedalClass(place)}`}>
                     {getMedalEmoji(place)} {place}
                   </td>
-                  <td className="py-3 px-4 font-semibold text-bone">
-                    {entry.playerName}
+                  <td className="py-3 px-4">
+                    <Link
+                      href={`/player/${entry.playerId}`}
+                      className="font-semibold text-bone hover:text-toxic transition-colors hover:underline cursor-pointer"
+                    >
+                      {entry.playerName}
+                    </Link>
                   </td>
                   <td className="py-3 px-4 text-center font-bold text-toxic text-lg">
                     {entry.totalScore}

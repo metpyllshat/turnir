@@ -32,14 +32,24 @@ export default function AdminPage() {
   const [participantsCount, setParticipantsCount] = useState("");
 
   useEffect(() => {
-    if (!authed) return;
-    fetch("/api/disciplines")
-      .then((r) => r.json())
-      .then((d) => setDisciplines(d.disciplines || []));
-    fetch("/api/admin/players")
-      .then((r) => r.json())
-      .then((d) => setPlayers(d.players || []));
-  }, [authed]);
+      if (!authed) return;
+    
+      fetch("/api/disciplines")
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.disciplines) setDisciplines(d.disciplines);
+          else console.error("disciplines error:", d);
+        })
+        .catch((e) => console.error("fetch disciplines failed:", e));
+    
+      fetch("/api/admin/players")
+        .then((r) => r.json())
+        .then((d) => {
+          if (d.players) setPlayers(d.players);
+          else console.error("players error:", d);
+        })
+        .catch((e) => console.error("fetch players failed:", e));
+    }, [authed]);
 
   if (!authed) {
     return (
@@ -102,7 +112,7 @@ export default function AdminPage() {
       // Обновить список игроков
       fetch("/api/admin/players")
         .then((r) => r.json())
-        .then((d) => setPlayers(d.players || []));
+        .then((d) => { if (d.players) setPlayers(d.players); });
     } else {
       setStatus(`❌ Ошибка: ${data.error}`);
     }

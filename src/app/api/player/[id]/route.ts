@@ -6,10 +6,11 @@ export const dynamic = "force-dynamic";
 
 export async function GET(
   _req: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const playerId = parseInt(params.id);
+    const { id } = await params;
+    const playerId = parseInt(id);
     if (isNaN(playerId)) {
       return Response.json({ error: "Invalid player id" }, { status: 400 });
     }

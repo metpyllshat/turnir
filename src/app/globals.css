@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  --color-toxic: #39ff14;
+  --color-toxic-dark: #1a8a0a;
+  --color-blood: #ff1744;
+  --color-rust: #8b4513;
+  --color-ash: #1a1a1a;
+  --color-smoke: #2a2a2a;
+  --color-bone: #d4c5a9;
+  --color-mutant: #7fff00;
+  --color-radiation: #ccff00;
+  --color-gold-medal: #ffd700;
+  --color-silver-medal: #c0c0c0;
+  --color-bronze-medal: #cd7f32;
+
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+  25% { opacity: 0.9; }
+  75% { opacity: 0.85; }
+}
+
+@keyframes scanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(100vh); }
+}
+
+@keyframes pulse-toxic {
+  0%, 100% { text-shadow: 0 0 5px #39ff14, 0 0 10px #39ff14; }
+  50% { text-shadow: 0 0 20px #39ff14, 0 0 40px #39ff14, 0 0 60px #1a8a0a; }
+}
+
+@keyframes glitch {
+  0% { transform: translate(0); }
+  20% { transform: translate(-2px, 2px); }
+  40% { transform: translate(-2px, -2px); }
+  60% { transform: translate(2px, 2px); }
+  80% { transform: translate(2px, -2px); }
+  100% { transform: translate(0); }
+}
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes radiation-pulse {
+  0%, 100% { box-shadow: 0 0 5px rgba(57, 255, 20, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(57, 255, 20, 0.6), 0 0 40px rgba(57, 255, 20, 0.2); }
+}
+
+body {
+  background-color: #0a0a0a;
+  color: #d4c5a9;
+  font-family: var(--font-mono);
+}
+
+.toxic-glow {
+  animation: pulse-toxic 3s ease-in-out infinite;
+}
+
+.flickering {
+  animation: flicker 4s linear infinite;
+}
+
+.glitch-hover:hover {
+  animation: glitch 0.3s ease-in-out;
+}
+
+.slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+.radiation-border {
+  animation: radiation-pulse 2s ease-in-out infinite;
+}
+
+.scanline-overlay::after {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: rgba(57, 255, 20, 0.1);
+  animation: scanline 8s linear infinite;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #0a0a0a;
+}
+::-webkit-scrollbar-thumb {
+  background: #39ff14;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #1a8a0a;
+}

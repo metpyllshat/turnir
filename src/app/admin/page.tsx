@@ -292,7 +292,6 @@ export default function AdminPage() {
                   const d = disciplines.find(x => x.slug === e.target.value);
                   if (d) {
                     setEditDescription((d as any).description || "");
-                    setEditRules((d as any).rules || "");
                     setEditDownloadUrl((d as any).downloadUrl || "");
                     setEditScheduledAt((d as any).scheduledAt?.slice(0, 16) || "");
                     setEditIsActive((d as any).isActive ?? true);

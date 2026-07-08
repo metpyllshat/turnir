@@ -31,6 +31,14 @@ export default function AdminPage() {
   const [place, setPlace] = useState("");
   const [participantsCount, setParticipantsCount] = useState("");
 
+  const [editSlug, setEditSlug] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editRules, setEditRules] = useState("");
+  const [editDownloadUrl, setEditDownloadUrl] = useState("");
+  const [editScheduledAt, setEditScheduledAt] = useState("");
+  const [editIsActive, setEditIsActive] = useState(true);
+  const [editStatus, setEditStatus] = useState("");
+
   useEffect(() => {
       if (!authed) return;
     
@@ -235,6 +243,115 @@ export default function AdminPage() {
               }`}
             >
               {status}
+            </div>
+          )}
+        </div>
+
+        {/* Форма редактирования дисциплины */}
+        <div className="bg-smoke/30 border border-bone/10 rounded-xl p-6 mb-6">
+          <h2 className="text-bone font-bold text-xl mb-4">
+            ✏️ Редактировать дисциплину
+          </h2>
+
+          <div className="space-y-4">
+            <div>
+              <label className="text-bone/60 text-xs mb-1 block">ДИСЦИПЛИНА</label>
+              <select
+                value={editSlug}
+                onChange={(e) => {
+                  setEditSlug(e.target.value);
+                  const d = disciplines.find(x => x.slug === e.target.value);
+                  if (d) {
+                    setEditDescription((d as any).description || "");
+                    setEditRules((d as any).rules || "");
+                    setEditDownloadUrl((d as any).downloadUrl || "");
+                    setEditScheduledAt((d as any).scheduledAt?.slice(0, 16) || "");
+                    setEditIsActive((d as any).isActive ?? true);
+                  }
+                }}
+                className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none"
+              >
+                <option value="">— Выбрать дисциплину —</option>
+                {disciplines.map((d) => (
+                  <option key={d.id} value={d.slug}>{d.emoji} {d.name}</option>
+                ))}
+              </select>
+            </div>
+              
+            <div>
+              <label className="text-bone/60 text-xs mb-1 block">ОПИСАНИЕ</label>
+              <textarea
+                value={editDescription}
+                onChange={(e) => setEditDescription(e.target.value)}
+                rows={3}
+                placeholder="Описание игры..."
+                className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm resize-none"
+              />
+            </div>
+              
+            <div>
+              <label className="text-bone/60 text-xs mb-1 block">
+                ПРАВИЛА (каждое с новой строки)
+              </label>
+              <textarea
+                value={editRules}
+                onChange={(e) => setEditRules(e.target.value)}
+                rows={4}
+                placeholder={"Правило 1\nПравило 2\nПравило 3"}
+                className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm resize-none"
+              />
+            </div>
+              
+            <div>
+              <label className="text-bone/60 text-xs mb-1 block">ССЫЛКА НА СКАЧИВАНИЕ</label>
+              <input
+                type="url"
+                value={editDownloadUrl}
+                onChange={(e) => setEditDownloadUrl(e.target.value)}
+                placeholder="https://store.steampowered.com/..."
+                className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm"
+              />
+            </div>
+              
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="text-bone/60 text-xs mb-1 block">ДАТА ПРОВЕДЕНИЯ</label>
+                <input
+                  type="datetime-local"
+                  value={editScheduledAt}
+                  onChange={(e) => setEditScheduledAt(e.target.value)}
+                  className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="text-bone/60 text-xs mb-1 block">СТАТУС</label>
+                <select
+                  value={editIsActive ? "true" : "false"}
+                  onChange={(e) => setEditIsActive(e.target.value === "true")}
+                  className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none"
+                >
+                  <option value="true">✅ Активна</option>
+                  <option value="false">⏳ Запланирована</option>
+                </select>
+              </div>
+            </div>
+              
+            <button
+              onClick={saveDiscipline}
+              disabled={!editSlug}
+              className="w-full bg-bone/10 border-2 border-bone/30 text-bone font-bold py-3 rounded hover:bg-bone/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+            >
+              💾 СОХРАНИТЬ
+            </button>
+          </div>
+              
+          {editStatus && (
+            <div className={`mt-4 p-3 rounded border text-sm font-bold ${
+              editStatus.startsWith("✅")
+                ? "bg-toxic/10 border-toxic/30 text-toxic"
+                : "bg-blood/10 border-blood/30 text-blood"
+            }`}>
+              {editStatus}
             </div>
           )}
         </div>

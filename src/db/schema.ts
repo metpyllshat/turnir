@@ -26,6 +26,9 @@ export const disciplines = pgTable("disciplines", {
   isActive: boolean("is_active").notNull().default(true),
   scheduledAt: timestamp("scheduled_at"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  description: text("description"),
+  rules: text("rules"),
+  downloadUrl: text("download_url"),
 });
 
 // Results per player per discipline

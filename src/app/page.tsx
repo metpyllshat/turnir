@@ -1,34 +1,42 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Leaderboard from "./components/Leaderboard";
+import DisciplineModal from "./components/DisciplineModal";
 import Image from "next/image";
 
-export const dynamic = "force-dynamic";
-
-const GAMES = [
-  { emoji: "🔫", name: "Xonotic" },
-  { emoji: "🤖", name: "Hex Bots" },
-  { emoji: "🌏", name: "Geoguessr" },
-  { emoji: "♟️", name: "Chess" },
-  { emoji: "🐶", name: "Super Auto Pets" },
-  { emoji: "🏀", name: "Freestyle 2" },
-  { emoji: "⚔️", name: "Brawlhalla" },
-  { emoji: "🐉", name: "Dota 2" },
-  { emoji: "⛏️", name: "Minecraft" },
-  { emoji: "⏱️", name: "Tetris" },
-  { emoji: "💥", name: "Graphwar" },
-  { emoji: "🍺", name: "Drunken Wrestlers 2" },
-  { emoji: "🔫", name: "CS2D" },
-  { emoji: "❓", name: "SIGame" },
-  { emoji: "🦘", name: "Momentum Mod" },
-  { emoji: "🇼", name: "Wordle" },
-  { emoji: "🍆", name: "PvZ: Бесконечный" },
-];
+interface Discipline {
+  id: number;
+  slug: string;
+  name: string;
+  emoji: string;
+  isActive: boolean;
+  scheduledAt: string | null;
+  description: string | null;
+  rules: string | null;
+  downloadUrl: string | null;
+}
 
 export default function Home() {
+  const [disciplines, setDisciplines] = useState<Discipline[]>([]);
+  const [selectedDiscipline, setSelectedDiscipline] = useState<Discipline | null>(null);
+
+  useEffect(() => {
+    fetch("/api/disciplines")
+      .then((r) => r.json())
+      .then((d) => setDisciplines(d.disciplines || []));
+  }, []);
+
   return (
     <main className="min-h-screen relative">
+      {/* Модалка */}
+      <DisciplineModal
+        discipline={selectedDiscipline}
+        onClose={() => setSelectedDiscipline(null)}
+      />
+
       {/* Hero Section */}
       <section className="relative min-h-[70vh] flex items-center justify-center overflow-hidden">
-        {/* Background image */}
         <div className="absolute inset-0 z-0">
           <Image
             src="/images/hero-bg.jpg"
@@ -41,7 +49,6 @@ export default function Home() {
           <div className="absolute inset-0 bg-gradient-to-r from-toxic/5 to-transparent" />
         </div>
 
-        {/* Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <div className="mb-6">
             <Image
@@ -104,23 +111,50 @@ export default function Home() {
 
       {/* Games list */}
       <section className="py-12 px-4 max-w-6xl mx-auto">
-        <h2 className="text-2xl font-bold text-toxic toxic-glow text-center mb-8">
+        <h2 className="text-2xl font-bold text-toxic toxic-glow text-center mb-2">
           🎮 ДИСЦИПЛИНЫ АРЕНЫ
         </h2>
+        <p className="text-center text-bone/30 text-xs mb-8">
+          Нажми на дисциплину чтобы узнать подробности
+        </p>
+
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
-          {GAMES.map((game) => (
-            <div
-              key={game.name}
-              className="bg-smoke/50 border border-bone/10 rounded-lg p-3 text-center hover:border-toxic/30 hover:bg-toxic/5 transition-all glitch-hover group"
+          {disciplines.map((discipline) => (
+            <button
+              key={discipline.slug}
+              onClick={() => setSelectedDiscipline(discipline)}
+              className="bg-smoke/50 border border-bone/10 rounded-lg p-3 text-center hover:border-toxic/30 hover:bg-toxic/5 transition-all glitch-hover group relative cursor-pointer"
             >
+              {/* Бейдж активности */}
+              <div
+                className={`absolute top-2 right-2 w-2 h-2 rounded-full ${
+                  discipline.isActive ? "bg-toxic animate-pulse" : "bg-blood/60"
+                }`}
+              />
+
               <div className="text-2xl mb-1 group-hover:scale-110 transition-transform">
-                {game.emoji}
+                {discipline.emoji}
               </div>
               <div className="text-xs font-semibold text-bone/70 group-hover:text-toxic transition-colors">
-                {game.name}
+                {discipline.name}
               </div>
-            </div>
+              <div className="text-[10px] text-bone/30 mt-1 group-hover:text-toxic/50 transition-colors">
+                подробнее →
+              </div>
+            </button>
           ))}
+        </div>
+
+        {/* Легенда */}
+        <div className="flex items-center justify-center gap-6 mt-6 text-xs text-bone/30">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-toxic animate-pulse" />
+            <span>Активна</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-blood/60" />
+            <span>Запланирована</span>
+          </div>
         </div>
       </section>
 
@@ -185,7 +219,6 @@ export default function Home() {
         <p className="text-center text-bone/30 text-xs mb-8">
           Обновляется в реальном времени • Данные из бункера
         </p>
-
         <div className="bg-smoke/30 border border-toxic/10 rounded-xl p-4 md:p-6">
           <Leaderboard />
         </div>
@@ -202,17 +235,10 @@ export default function Home() {
         </div>
       </footer>
 
-      {/* Floating radiation particles (decorative) */}
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <div className="absolute top-1/4 left-1/4 w-1 h-1 bg-toxic/30 rounded-full animate-ping" />
-        <div
-          className="absolute top-3/4 right-1/3 w-1 h-1 bg-toxic/20 rounded-full animate-ping"
-          style={{ animationDelay: "1s" }}
-        />
-        <div
-          className="absolute top-1/2 right-1/4 w-0.5 h-0.5 bg-radiation/20 rounded-full animate-ping"
-          style={{ animationDelay: "2s" }}
-        />
+        <div className="absolute top-3/4 right-1/3 w-1 h-1 bg-toxic/20 rounded-full animate-ping" style={{ animationDelay: "1s" }} />
+        <div className="absolute top-1/2 right-1/4 w-0.5 h-0.5 bg-radiation/20 rounded-full animate-ping" style={{ animationDelay: "2s" }} />
       </div>
     </main>
   );

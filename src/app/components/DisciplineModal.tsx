@@ -8,7 +8,6 @@ interface Discipline {
   isActive: boolean;
   scheduledAt: string | null;
   description: string | null;
-  rules: string | null;
   downloadUrl: string | null;
 }
 
@@ -79,25 +78,9 @@ export default function DisciplineModal({ discipline, onClose }: Props) {
             </div>
           )}
 
-          {/* Правила */}
-          {discipline.rules && (
-            <div>
-              <h3 className="text-bone/60 text-xs font-bold uppercase tracking-widest mb-2">
-                ⚠️ Правила
-              </h3>
-              <div className="bg-blood/5 border border-blood/20 rounded-lg p-4">
-                {/* Разбиваем по строкам чтобы можно было писать через Enter */}
-                {discipline.rules.split("\n").map((line, i) => (
-                  <p key={i} className="text-bone/70 text-sm leading-relaxed">
-                    {line || <br />}
-                  </p>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* Если нет ни описания ни правил */}
-          {!discipline.description && !discipline.rules && (
+          {!discipline.description && (
             <div className="text-center py-6">
               <p className="text-bone/30 text-sm">
                 Описание и правила скоро появятся

@@ -4,11 +4,15 @@ import { useState, useEffect } from "react";
 
 const ADMIN_PASSWORD = "koryazhma2026"; // поменяй на свой пароль
 
-interface Discipline {
+interface AdminDiscipline {
   id: number;
   slug: string;
   name: string;
   emoji: string;
+  isActive: boolean;
+  scheduledAt: string | null;
+  description: string | null;
+  downloadUrl: string | null;
 }
 
 interface Player {
@@ -20,7 +24,7 @@ interface Player {
 export default function AdminPage() {
   const [authed, setAuthed] = useState(false);
   const [password, setPassword] = useState("");
-  const [disciplines, setDisciplines] = useState<Discipline[]>([]);
+  const [disciplines, setDisciplines] = useState<AdminDiscipline[]>([]);
   const [players, setPlayers] = useState<Player[]>([]);
   const [status, setStatus] = useState("");
 
@@ -33,7 +37,6 @@ export default function AdminPage() {
 
   const [editSlug, setEditSlug] = useState("");
   const [editDescription, setEditDescription] = useState("");
-  const [editRules, setEditRules] = useState("");
   const [editDownloadUrl, setEditDownloadUrl] = useState("");
   const [editScheduledAt, setEditScheduledAt] = useState("");
   const [editIsActive, setEditIsActive] = useState(true);
@@ -135,7 +138,6 @@ export default function AdminPage() {
         secret: "koryazhma-secret-2026",
         slug: editSlug,
         description: editDescription,
-        rules: editRules,
         downloadUrl: editDownloadUrl,
         scheduledAt: editScheduledAt || null,
         isActive: editIsActive,
@@ -177,12 +179,13 @@ export default function AdminPage() {
               <select
                 className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone mb-2 focus:border-toxic outline-none"
                 onChange={(e) => {
-                  const p = players.find(
-                    (x) => x.id === parseInt(e.target.value)
-                  );
-                  if (p) {
-                    setDiscordId(p.discordId);
-                    setPlayerName(p.name);
+                  setEditSlug(e.target.value);
+                  const d = disciplines.find(x => x.slug === e.target.value);
+                  if (d) {
+                    setEditDescription(d.description || "");
+                    setEditDownloadUrl(d.downloadUrl || "");
+                    setEditScheduledAt(d.scheduledAt?.slice(0, 16) || "");
+                    setEditIsActive(d.isActive ?? true);
                   }
                 }}
               >
@@ -311,19 +314,6 @@ export default function AdminPage() {
                 onChange={(e) => setEditDescription(e.target.value)}
                 rows={3}
                 placeholder="Описание игры..."
-                className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm resize-none"
-              />
-            </div>
-              
-            <div>
-              <label className="text-bone/60 text-xs mb-1 block">
-                ПРАВИЛА (каждое с новой строки)
-              </label>
-              <textarea
-                value={editRules}
-                onChange={(e) => setEditRules(e.target.value)}
-                rows={4}
-                placeholder={"Правило 1\nПравило 2\nПравило 3"}
                 className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm resize-none"
               />
             </div>

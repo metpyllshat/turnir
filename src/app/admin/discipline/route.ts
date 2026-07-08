@@ -11,7 +11,6 @@ export async function POST(req: Request) {
       secret,
       slug,
       description,
-      rules,
       downloadUrl,
       scheduledAt,
       isActive,
@@ -26,19 +25,24 @@ export async function POST(req: Request) {
       return Response.json({ error: "Missing slug" }, { status: 400 });
     }
 
-    await db
+    const updated = await db
       .update(disciplines)
       .set({
         description: description || null,
-        rules: rules || null,
         downloadUrl: downloadUrl || null,
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
         isActive: isActive ?? true,
       })
-      .where(eq(disciplines.slug, slug));
+      .where(eq(disciplines.slug, slug))
+      .returning();
 
-    return Response.json({ ok: true });
+    if (updated.length === 0) {
+      return Response.json({ error: `Дисциплина '${slug}' не найдена` }, { status: 404 });
+    }
+
+    return Response.json({ ok: true, discipline: updated[0] });
   } catch (err: unknown) {
+    console.error("POST /api/admin/discipline error:", err);
     const message = err instanceof Error ? err.message : "Unknown error";
     return Response.json({ error: message }, { status: 500 });
   }

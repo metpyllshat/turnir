@@ -126,6 +126,32 @@ export default function AdminPage() {
     }
   }
 
+  async function saveDiscipline() {
+    setEditStatus("⏳ Сохраняем...");
+    const res = await fetch("/api/admin/discipline", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: "koryazhma-secret-2026",
+        slug: editSlug,
+        description: editDescription,
+        rules: editRules,
+        downloadUrl: editDownloadUrl,
+        scheduledAt: editScheduledAt || null,
+        isActive: editIsActive,
+      }),
+    });
+    const data = await res.json();
+    if (data.ok) {
+      setEditStatus("✅ Сохранено!");
+      fetch("/api/disciplines")
+        .then((r) => r.json())
+        .then((d) => { if (d.disciplines) setDisciplines(d.disciplines); });
+    } else {
+      setEditStatus(`❌ Ошибка: ${data.error}`);
+    }
+  }
+  
   return (
     <div className="min-h-screen bg-[#0a0a0a] p-6">
       <div className="max-w-2xl mx-auto">

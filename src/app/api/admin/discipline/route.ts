@@ -13,7 +13,9 @@ export async function POST(req: Request) {
       description,
       downloadUrl,
       scheduledAt,
+      completedAt, // 🆕
       isActive,
+      isOver, // 🆕
     } = body;
 
     const expectedSecret = process.env.BOT_SECRET || "koryazhma-secret-2026";
@@ -31,7 +33,9 @@ export async function POST(req: Request) {
         description: description || null,
         downloadUrl: downloadUrl || null,
         scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+        completedAt: completedAt ? new Date(completedAt) : (isOver ? new Date() : null),
         isActive: isActive ?? true,
+        isOver: isOver ?? false,
       })
       .where(eq(disciplines.slug, slug))
       .returning();

@@ -13,6 +13,8 @@ interface AdminDiscipline {
   scheduledAt: string | null;
   description: string | null;
   downloadUrl: string | null;
+  isOver: boolean;
+  completedAt: string | null;
 }
 
 interface Player {
@@ -41,6 +43,8 @@ export default function AdminPage() {
   const [editScheduledAt, setEditScheduledAt] = useState("");
   const [editIsActive, setEditIsActive] = useState(true);
   const [editStatus, setEditStatus] = useState("");
+  const [editIsOver, setEditIsOver] = useState(false);
+  const [editCompletedAt, setEditCompletedAt] = useState("");
 
   useEffect(() => {
       if (!authed) return;
@@ -141,6 +145,8 @@ export default function AdminPage() {
         downloadUrl: editDownloadUrl,
         scheduledAt: editScheduledAt || null,
         isActive: editIsActive,
+        isOver: editIsOver,
+        completedAt: editCompletedAt || null,
       }),
     });
     const data = await res.json();
@@ -295,6 +301,8 @@ export default function AdminPage() {
                     setEditDownloadUrl((d as any).downloadUrl || "");
                     setEditScheduledAt((d as any).scheduledAt?.slice(0, 16) || "");
                     setEditIsActive((d as any).isActive ?? true);
+                    setEditIsOver((d as any).isOver ?? false);
+                    setEditCompletedAt((d as any).completedAt?.slice(0, 16) || "");
                   }
                 }}
                 className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none"
@@ -350,6 +358,35 @@ export default function AdminPage() {
                 </select>
               </div>
             </div>
+                          
+            {/* 🆕 НОВЫЙ БЛОК — чекбокс "завершена" */}
+            <div className="flex items-center gap-2 bg-black/30 rounded px-4 py-2">
+              <input
+                type="checkbox"
+                id="isOver"
+                checked={editIsOver}
+                onChange={(e) => setEditIsOver(e.target.checked)}
+                className="w-4 h-4 accent-toxic"
+              />
+              <label htmlFor="isOver" className="text-bone text-sm cursor-pointer">
+                🏁 Дисциплина завершена
+              </label>
+            </div>
+                          
+            {/* 🆕 НОВЫЙ БЛОК — дата завершения (показывается только если isOver=true) */}
+            {editIsOver && (
+              <div>
+                <label className="text-bone/60 text-xs mb-1 block">
+                  ДАТА ЗАВЕРШЕНИЯ (пусто = сейчас)
+                </label>
+                <input
+                  type="datetime-local"
+                  value={editCompletedAt}
+                  onChange={(e) => setEditCompletedAt(e.target.value)}
+                  className="w-full bg-black/50 border border-bone/20 rounded px-4 py-2 text-bone focus:border-toxic outline-none text-sm"
+                />
+              </div>
+            )}
               
             <button
               onClick={saveDiscipline}

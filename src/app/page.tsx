@@ -15,6 +15,8 @@ interface Discipline {
   description: string | null;
   rules: string | null;
   downloadUrl: string | null;
+  isOver: boolean;
+  completedAt: string | null;
 }
 
 export default function Home() {
@@ -128,7 +130,11 @@ export default function Home() {
               {/* Бейдж активности */}
               <div
                 className={`absolute top-2 right-2 w-2 h-2 rounded-full ${
-                  discipline.isActive ? "bg-toxic animate-pulse" : "bg-blood/60"
+                  discipline.isOver 
+                    ? "bg-bone/40" 
+                    : discipline.isActive 
+                      ? "bg-toxic animate-pulse" 
+                      : "bg-blood/60"
                 }`}
               />
 

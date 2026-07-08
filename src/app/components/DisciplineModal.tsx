@@ -9,6 +9,8 @@ interface Discipline {
   scheduledAt: string | null;
   description: string | null;
   downloadUrl: string | null;
+  completedAt: string | null;
+  isOver: boolean;
 }
 
 interface Props {
@@ -38,7 +40,26 @@ export default function DisciplineModal({ discipline, onClose }: Props) {
               <h2 className="text-toxic font-extrabold text-xl leading-tight">
                 {discipline.name}
               </h2>
-              {!discipline.isActive && discipline.scheduledAt && (
+              {discipline.isOver ? (
+                <p className="text-bone/60 text-xs font-bold mt-0.5">
+                  🏁 ЗАВЕРШЕНА
+                  {discipline.completedAt && (
+                    <span className="text-bone/40">
+                      {" • "}
+                      {new Date(discipline.completedAt).toLocaleString("ru-RU", {
+                        day: "numeric",
+                        month: "long",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
+                </p>
+              ) : discipline.isActive ? (
+                <p className="text-toxic/60 text-xs font-bold mt-0.5">
+                  ✅ АКТИВНА
+                </p>
+              ) : discipline.scheduledAt ? (
                 <p className="text-blood text-xs font-bold mt-0.5">
                   ⏳{" "}
                   {new Date(discipline.scheduledAt).toLocaleString("ru-RU", {
@@ -48,12 +69,7 @@ export default function DisciplineModal({ discipline, onClose }: Props) {
                     minute: "2-digit",
                   })}
                 </p>
-              )}
-              {discipline.isActive && (
-                <p className="text-toxic/60 text-xs font-bold mt-0.5">
-                  ✅ АКТИВНА
-                </p>
-              )}
+              ) : null}
             </div>
           </div>
           <button

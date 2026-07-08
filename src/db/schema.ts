@@ -24,7 +24,9 @@ export const disciplines = pgTable("disciplines", {
   name: text("name").notNull(),
   emoji: text("emoji").notNull().default("🎮"),
   isActive: boolean("is_active").notNull().default(true),
+  isOver: boolean("is_over").notNull().default(false), // 🆕
   scheduledAt: timestamp("scheduled_at"),
+  completedAt: timestamp("completed_at"), // 🆕
   createdAt: timestamp("created_at").defaultNow().notNull(),
   description: text("description"),
   rules: text("rules"),

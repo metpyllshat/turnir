@@ -337,7 +337,7 @@ export default function AdminPage() {
             </div>
               
             <button
-              onClick={setDiscipline}
+              onClick={setDisciplines}
               disabled={!editSlug}
               className="w-full bg-bone/10 border-2 border-bone/30 text-bone font-bold py-3 rounded hover:bg-bone/20 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
             >

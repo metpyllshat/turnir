@@ -58,6 +58,17 @@ export default function DisciplineModal({ discipline, onClose }: Props) {
               ) : discipline.isActive ? (
                 <p className="text-toxic/60 text-xs font-bold mt-0.5">
                   ✅ АКТИВНА
+                  {discipline.scheduledAt && (
+                    <span className="text-bone/40">
+                      {" • "}
+                      {new Date(discipline.scheduledAt).toLocaleString("ru-RU", {
+                        day: "numeric",
+                        month: "long",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </span>
+                  )}
                 </p>
               ) : discipline.scheduledAt ? (
                 <p className="text-blood text-xs font-bold mt-0.5">

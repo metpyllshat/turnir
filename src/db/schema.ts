@@ -6,6 +6,7 @@ import {
   timestamp,
   uniqueIndex,
   boolean,
+  real,
 } from "drizzle-orm/pg-core";
 
 // Players / participants
@@ -45,7 +46,7 @@ export const results = pgTable(
       .notNull()
       .references(() => disciplines.id, { onDelete: "cascade" }),
     place: integer("place").notNull(), // 1st, 2nd, 3rd etc.
-    score: integer("score").notNull(), // points awarded (= number of participants - place + 1, or custom)
+    score: real("score").notNull(), // points awarded (= number of participants - place + 1, or custom)
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [

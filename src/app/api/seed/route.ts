@@ -16,7 +16,7 @@ const GAMES = [
   { slug: "minecraft", name: "Minecraft (мини-игра)", emoji: "⛏️" },
   { slug: "tetris", name: "Tetris", emoji: "⏱️" },
   { slug: "graphwar", name: "Graphwar", emoji: "💥" },
-  { slug: "drunken-wrestlers", name: "Drunken Wrestlers 2", emoji: "🍺" },
+  { slug: "minesweeper", name: "Minesweeper", emoji: "💣" },
   { slug: "cs2d", name: "CS2D", emoji: "🔫" },
   { slug: "sigame", name: "SIGame", emoji: "❓" },
   { slug: "momentum-mod", name: "Momentum Mod", emoji: "🦘" },

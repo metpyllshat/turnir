@@ -151,7 +151,7 @@ export default function PlayerPage() {
           <div className="grid grid-cols-3 gap-4 mt-6">
             <div className="bg-black/30 rounded-lg p-4 text-center">
               <div className="text-3xl font-extrabold text-toxic">
-                {totalScore}
+                {totalScore.toFixed(1)}
               </div>
               <div className="text-xs text-bone/40 mt-1">ОЧКОВ</div>
             </div>
@@ -214,7 +214,7 @@ export default function PlayerPage() {
                       {getMedalEmoji(r.place)}
                     </span>
                     <span className="text-toxic font-bold text-sm w-16 text-right">
-                      +{r.score} очк.
+                      +{r.score.toFixed(1)} очк.
                     </span>
                   </div>
                 ))}

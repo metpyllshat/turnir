@@ -75,8 +75,8 @@ export async function POST(req: NextRequest) {
     for (const result of currentResults) {
       if (result.playerId !== playerId) {
         const recalcScore = Math.round(
-          Math.sqrt(10 * totalParticipants) * (totalParticipants - result.place + 1) / totalParticipants
-        );
+          (Math.sqrt(10 * totalParticipants) * (totalParticipants - result.place + 1) / totalParticipants) * 10
+        ) / 10;
         await db
           .update(results)
           .set({ score: recalcScore })
@@ -86,8 +86,8 @@ export async function POST(req: NextRequest) {
 
     // 5. Очки для нового/обновляемого результата
     const score = Math.round(
-      Math.sqrt(10 * totalParticipants) * (totalParticipants - place + 1) / totalParticipants
-    );
+      (Math.sqrt(10 * totalParticipants) * (totalParticipants - place + 1) / totalParticipants) * 10
+    ) / 10;
 
     // 6. Upsert результат
     const existingResult = currentResults.find(r => r.playerId === playerId);

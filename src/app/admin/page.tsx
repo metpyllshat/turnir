@@ -119,7 +119,7 @@ export default function AdminPage() {
 
     const data = await res.json();
     if (data.ok) {
-      setStatus(`✅ Готово! ${playerName} — ${place} место (+${data.score} очков)`);
+      setStatus(`✅ Готово! ${playerName} — ${place} место (+${data.score.toFixed(1)} очков)`);
       setDiscordId("");
       setPlayerName("");
       setPlace("");

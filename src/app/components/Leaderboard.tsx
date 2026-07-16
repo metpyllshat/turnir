@@ -259,7 +259,7 @@ function OverallTable({
                   {entry.playerName}
                 </Link>
                 <div className="text-3xl font-extrabold text-toxic toxic-glow">
-                  {entry.totalScore}
+                  {entry.totalScore.toFixed(1)}
                 </div>
                 <div className="text-xs text-bone/40 mt-2">
                   Игр сыграно: {entry.gamesPlayed} /{" "}
@@ -324,7 +324,7 @@ function OverallTable({
                     </Link>
                   </td>
                   <td className="py-3 px-4 text-center font-bold text-toxic text-lg">
-                    {entry.totalScore}
+                    {entry.totalScore.toFixed(1)}
                   </td>
                   <td className="py-3 px-4 text-center text-bone/50">
                     {entry.gamesPlayed}
@@ -451,7 +451,7 @@ function DisciplineTable({
                   </a>
                 </td>
                 <td className="py-3 px-4 text-center font-bold text-toxic">
-                  +{entry.score}
+                  +{entry.score.toFixed(1)}
                 </td>
               </tr>
             ))}
